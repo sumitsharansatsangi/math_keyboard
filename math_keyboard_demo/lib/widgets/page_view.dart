@@ -1068,7 +1068,7 @@ class _FormFieldPage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 16),
                 child: TextButton(
                   onPressed: () {
-                    final result = Form.of(context)!.validate();
+                    final result = Form.of(context).validate();
 
                     if (result == true) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

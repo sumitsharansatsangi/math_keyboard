@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:math_keyboard/math_keyboard.dart';
 
 void main() {
@@ -24,9 +23,6 @@ class ExampleApp extends StatelessWidget {
         // So if you want to prevent commas as decimal separators, you should
         // not provide supported locales that use commas as decimal separators.
         Locale('de', 'DE'),
-      ],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
       ],
       theme: ThemeData(
         primarySwatch: Colors.blue,
