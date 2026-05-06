@@ -51,25 +51,25 @@ class MathFormField extends FormField<String> {
              }
            }
 
-              return MathField(
-                controller: state._controller,
-                focusNode: focusNode,
-                decoration: decoration.copyWith(errorText: field.errorText),
-                keyboardType: keyboardType,
-                variables: variables,
-                autofocus: autofocus,
-                onChanged: onChangedHandler,
-                onSubmitted: onFieldSubmitted,
-                customPages: customPages,
-              );
+           return MathField(
+             controller: state._controller,
+             focusNode: focusNode,
+             decoration: decoration.copyWith(errorText: field.errorText),
+             keyboardType: keyboardType,
+             variables: variables,
+             autofocus: autofocus,
+             onChanged: onChangedHandler,
+             onSubmitted: onFieldSubmitted,
+             customPages: customPages,
+           );
+         },
+       );
 
-  /// Controls the math input being edited.
-  ///
-  /// If null, this widget will create its own [MathFieldEditingController].
+  /// An optional controller for the math field.
   final MathFieldEditingController? controller;
 
   @override
-  _MathFormFieldState createState() => _MathFormFieldState();
+  FormFieldState<String> createState() => _MathFormFieldState();
 }
 
 class _MathFormFieldState extends FormFieldState<String> {

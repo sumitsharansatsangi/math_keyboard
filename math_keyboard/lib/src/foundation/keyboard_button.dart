@@ -21,7 +21,7 @@ abstract class KeyboardButtonConfig {
   /// button will expand to the full height of the row.
   final double? heightFactor;
 
-  /// The list of [RawKeyEvent.character] that should trigger this keyboard
+  /// The list of [KeyEvent.character] that should trigger this keyboard
   /// button on a physical keyboard.
   ///
   /// Note that the case of the characters is ignored.
@@ -45,15 +45,11 @@ class BasicKeyboardButtonConfig extends KeyboardButtonConfig {
     List<String> keyboardCharacters = const [],
     int? flex,
     double? heightFactor,
-  }) : super(flex: flex, heightFactor: heightFactor, keyboardCharacters: keyboardCharacters);
-=======
-    double? heightFactor,
   }) : super(
-          flex: flex,
-          keyboardCharacters: keyboardCharacters,
-          heightFactor: heightFactor,
-        );
->>>>>>> pr-58
+         flex: flex,
+         heightFactor: heightFactor,
+         keyboardCharacters: keyboardCharacters,
+       );
 
   /// The label of the button.
   final String label;
@@ -221,6 +217,20 @@ final functionKeyboard = CustomButtonPage(
       ),
     ],
     [
+      const BasicKeyboardButtonConfig(
+        label: r'\int_{\Box}^{\Box} (\Box) dx',
+        value: r'\int',
+        asTex: true,
+        args: [TeXArg.undbraces, TeXArg.powbraces, TeXArg.parenthesesdx],
+      ),
+      const BasicKeyboardButtonConfig(
+        label: r'\frac{d}{dx} ({\Box})',
+        value: r'\frac{d}{dx}',
+        asTex: true,
+        args: [TeXArg.braces],
+      ),
+    ],
+    [
       const PageButtonConfig(flex: 3),
       const BasicKeyboardButtonConfig(
         label: '(',
@@ -239,152 +249,76 @@ final functionKeyboard = CustomButtonPage(
       DeleteButtonConfig(),
     ],
   ],
-
-  [
-    const BasicKeyboardButtonConfig(
-      label: r'\sqrt{\Box}',
-      value: r'\sqrt',
-      args: [TeXArg.braces],
-      asTex: true,
-      keyboardCharacters: ['r'],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\sqrt[\Box]{\Box}',
-      value: r'\sqrt',
-      args: [TeXArg.brackets, TeXArg.braces],
-      asTex: true,
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\cos',
-      value: r'\cos(',
-      asTex: true,
-      keyboardCharacters: ['c'],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\cos^{-1}',
-      value: r'\cos^{-1}(',
-      asTex: true,
-    ),
-  ],
-  [
-    const BasicKeyboardButtonConfig(
-      label: r'\log_{\Box}(\Box)',
-      value: r'\log_',
-      asTex: true,
-      args: [TeXArg.braces, TeXArg.parentheses],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\ln(\Box)',
-      value: r'\ln(',
-      asTex: true,
-      keyboardCharacters: ['l'],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\tan',
-      value: r'\tan(',
-      asTex: true,
-      keyboardCharacters: ['t'],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\tan^{-1}',
-      value: r'\tan^{-1}(',
-      asTex: true,
-    ),
-  ],
-  [
-    const BasicKeyboardButtonConfig(
-      label: r'\int_{\Box}^{\Box} (\Box) dx',
-      value: r'\int',
-      asTex: true,
-      args: [TeXArg.undbraces, TeXArg.powbraces, TeXArg.parenthesesdx],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: r'\frac{d}{dx} ({\Box})',
-      value: r'\frac{d}{dx}',
-      asTex: true,
-      args: [TeXArg.braces],
-    ),
-  ],
-  [
-    const PageButtonConfig(flex: 3),
-    const BasicKeyboardButtonConfig(
-      label: '(',
-      value: '(',
-      highlighted: true,
-      keyboardCharacters: ['('],
-    ),
-    const BasicKeyboardButtonConfig(
-      label: ')',
-      value: ')',
-      highlighted: true,
-      keyboardCharacters: [')'],
-    ),
-    PreviousButtonConfig(),
-    NextButtonConfig(),
-    DeleteButtonConfig(),
-  ],
-];
+);
 
 /// Standard keyboard for math expression input.
-List<List<KeyboardButtonConfig>> standardKeyboard ({bool isShowMultiplyValueAsDot=true}){
-  final multiplyButtonValue = isShowMultiplyValueAsDot ? r'\cdot' : r'\times';
-  return [
-  [
-    _digitButtons[7],
-    _digitButtons[8],
-    _digitButtons[9],
-     BasicKeyboardButtonConfig(
-      label: '×',
-      value: multiplyButtonValue,
-      keyboardCharacters: ['*'],
-      highlighted: true,
-    ),
-    const BasicKeyboardButtonConfig(
-      label: '÷',
-      value: r'\frac',
-      keyboardCharacters: ['/'],
-      args: [TeXArg.braces, TeXArg.braces],
-      highlighted: true,
-    ),
-  ],
-  [
-    _digitButtons[4],
-    _digitButtons[5],
-    _digitButtons[6],
-    const BasicKeyboardButtonConfig(
-      label: '+',
-      value: '+',
-      keyboardCharacters: ['+'],
-      highlighted: true,
-    ),
-    _subtractButton,
-  ],
-  [
-    _digitButtons[1],
-    _digitButtons[2],
-    _digitButtons[3],
-    _decimalButton,
-    DeleteButtonConfig(),
-  ],
-  [
-    const PageButtonConfig(),
-    _digitButtons[0],
-    PreviousButtonConfig(),
-    NextButtonConfig(),
-    SubmitButtonConfig(),
-  ],
-];}
-
-/// Keyboard getting shown for number input only.
-final numberKeyboard = [
-  [_digitButtons[7], _digitButtons[8], _digitButtons[9], _subtractButton],
-  [_digitButtons[4], _digitButtons[5], _digitButtons[6], _decimalButton],
-  [_digitButtons[1], _digitButtons[2], _digitButtons[3], DeleteButtonConfig()],
-  [
-    PreviousButtonConfig(),
-    _digitButtons[0],
-    NextButtonConfig(),
-    SubmitButtonConfig(),
+final standardKeyboard = CustomButtonPage(
+  label: '123',
+  buttonLayout: [
+    [
+      _digitButtons[7],
+      _digitButtons[8],
+      _digitButtons[9],
+      const BasicKeyboardButtonConfig(
+        label: '×',
+        value: r'\cdot',
+        keyboardCharacters: ['*'],
+        highlighted: true,
+      ),
+      const BasicKeyboardButtonConfig(
+        label: '÷',
+        value: r'\frac',
+        keyboardCharacters: ['/'],
+        args: [TeXArg.braces, TeXArg.braces],
+        highlighted: true,
+      ),
+    ],
+    [
+      _digitButtons[4],
+      _digitButtons[5],
+      _digitButtons[6],
+      const BasicKeyboardButtonConfig(
+        label: '+',
+        value: '+',
+        keyboardCharacters: ['+'],
+        highlighted: true,
+      ),
+      _subtractButton,
+    ],
+    [
+      _digitButtons[1],
+      _digitButtons[2],
+      _digitButtons[3],
+      _decimalButton,
+      DeleteButtonConfig(),
+    ],
+    [
+      const PageButtonConfig(),
+      _digitButtons[0],
+      PreviousButtonConfig(),
+      NextButtonConfig(),
+      SubmitButtonConfig(),
+    ],
   ],
 );
->>>>>>> pr-58
+
+/// Keyboard getting shown for number input only.
+final numberKeyboard = CustomButtonPage(
+  label: '123',
+  buttonLayout: [
+    [_digitButtons[7], _digitButtons[8], _digitButtons[9], _subtractButton],
+    [_digitButtons[4], _digitButtons[5], _digitButtons[6], _decimalButton],
+    [
+      _digitButtons[1],
+      _digitButtons[2],
+      _digitButtons[3],
+      DeleteButtonConfig(),
+    ],
+    [
+      PreviousButtonConfig(),
+      _digitButtons[0],
+      NextButtonConfig(),
+      SubmitButtonConfig(),
+    ],
+  ],
+);
