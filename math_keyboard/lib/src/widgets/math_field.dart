@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'package:math_expressions/math_expressions.dart' as math_expressions;
+import 'package:math_expressions/math_expressions.dart' hide Stack;
 import 'package:math_keyboard/src/foundation/keyboard_button.dart';
 import 'package:math_keyboard/src/foundation/math2tex.dart';
 import 'package:math_keyboard/src/foundation/node.dart';
@@ -711,7 +711,7 @@ class MathFieldEditingController extends ChangeNotifier {
   }
 
   /// Clears the current value and sets it to the [expression] equivalent.
-  void updateValue(math_expressions.Expression expression) {
+  void updateValue(Expression expression) {
     try {
       root = convertMathExpressionToTeXNode(expression);
     } catch (e) {
