@@ -1,6 +1,10 @@
 ## UPCOMING RELEASE
 
 - keyboard now supports both integration and derivation
+- Adds support for custom keyboard pages using the new `customPages` attribute that takes a list of `CustomButtonPage`s.
+- BREAKING: `bool secondPage` has been replaced with `int page` in `MathFieldEditingController`.
+- Adds a `fontSize` attribute to `MathKeyboard` and a `keyboardButtonFontSize` attribute to `MathField`.
+- Adds a `heightFactor` attribute to `KeyboardButtonConfig`
 
 ## 0.3.3
 

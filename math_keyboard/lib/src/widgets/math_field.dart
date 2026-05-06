@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:math_expressions/math_expressions.dart' hide Stack;
+import 'package:math_keyboard/src/custom_button_pages/custom_button_page.dart';
 import 'package:math_keyboard/src/foundation/keyboard_button.dart';
 import 'package:math_keyboard/src/foundation/math2tex.dart';
 import 'package:math_keyboard/src/foundation/node.dart';
@@ -26,7 +27,10 @@ class MathField extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.onChanged,
     this.onSubmitted,
-    this.opensKeyboard = true,  this.isShowMultiplyValueAsDot=true,
+    this.opensKeyboard = true,
+    this.customPages = const [],
+    this.keyboardButtonFontSize = 22,
+    this.isShowMultiplyValueAsDot = true,
   });
 
   /// The controller for the math field.
@@ -115,6 +119,16 @@ class MathField extends StatefulWidget {
   ///
   /// Defaults to `true`.
   final bool opensKeyboard;
+  /// Defines custom pages that should be added to the keyboard. If
+  /// [keyboardType] is set to [MathKeyboardType.expression], then
+  /// these pages will be appended after the default keyboard pages.
+  /// If you'd like to define completely custom pages, you can use
+  /// [MathKeyboardType.custom], in which case this list must not be empty.
+  final List<CustomButtonPage> customPages;
+
+  /// The font size of basic buttons in this keyboard
+  final double keyboardButtonFontSize;
+
   /// if true, the multiply value will be shown as dot else it will be shown as x
   final bool isShowMultiplyValueAsDot;
   @override
@@ -333,6 +347,8 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
             // overlay context does not have the ancestor state.
             insetsState: MathKeyboardViewInsetsState.of(this.context),
             slideAnimation: _keyboardSlideController,
+            customPages: widget.customPages,
+            fontSize: widget.keyboardButtonFontSize,
           ),
         );
       },
@@ -370,10 +386,29 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
     final configs = <List<KeyboardButtonConfig>>[
       if (widget.keyboardType ==
           MathKeyboardType.expression) ...<List<KeyboardButtonConfig>>[
-        ...standardKeyboard(isShowMultiplyValueAsDot: widget.isShowMultiplyValueAsDot),
-        ...functionKeyboard,
+        ...standardKeyboard.buttonLayout,
+        ...functionKeyboard.buttonLayout,
+        ...(widget.customPages.fold<List<List<KeyboardButtonConfig>>>(
+          [],
+          (previousValue, customPage) {
+            return previousValue..addAll(customPage.buttonLayout);
+          },
+        )),
       ] else if (widget.keyboardType == MathKeyboardType.numberOnly) ...[
-        ...numberKeyboard,
+        ...numberKeyboard.buttonLayout,
+        ...(widget.customPages.fold<List<List<KeyboardButtonConfig>>>(
+          [],
+          (previousValue, customPage) {
+            return previousValue..addAll(customPage.buttonLayout);
+          },
+        )),
+      ] else if (widget.keyboardType == MathKeyboardType.custom) ...[
+        ...(widget.customPages.fold<List<List<KeyboardButtonConfig>>>(
+          [],
+          (previousValue, customPage) {
+            return previousValue..addAll(customPage.buttonLayout);
+          },
+        )),
       ],
     ].fold<List<KeyboardButtonConfig>>([], (previousValue, element) {
       return previousValue..addAll(element);
@@ -681,8 +716,8 @@ class MathFieldEditingController extends ChangeNotifier {
     currentNode.setCursor();
   }
 
-  /// Type of the Keyboard.
-  bool secondPage = false;
+  /// The index of the page to show on the keyboard.
+  int page = 0;
 
   /// The root node of the expression.
   TeXNode root = TeXNode(null);
@@ -994,9 +1029,9 @@ class MathFieldEditingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Switches between Page 1 and 2.
+  /// Increments to the next available button page.
   void togglePage() {
-    secondPage = !secondPage;
+    page++;
     notifyListeners();
   }
 
