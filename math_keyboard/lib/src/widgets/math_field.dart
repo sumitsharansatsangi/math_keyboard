@@ -628,6 +628,7 @@ class _FieldPreview extends StatelessWidget {
           '{${decimalSeparator(context)}}',
         );
 
+    print(tex);
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minWidth: double.infinity,
@@ -831,12 +832,23 @@ class MathFieldEditingController extends ChangeNotifier {
     // The same applies for fractions.
     else if (tex == r'\frac') {
       addFrac(func);
+    } else if (tex == r'\int') {
+      addInt(func);
     } else {
       currentNode.addTeX(func);
       currentNode = func.argNodes.first;
     }
     currentNode.setCursor();
     notifyListeners();
+  }
+
+  /// Adds an integration to the current node
+  ///
+  void addInt(TeXFunction int) {
+    // were adding dx to the end of the integration function
+
+    currentNode.addTeX(int);
+    currentNode = int.argNodes.first;
   }
 
   /// Adds a pow to the current node
