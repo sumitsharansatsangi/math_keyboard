@@ -26,7 +26,7 @@ class MathField extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.onChanged,
     this.onSubmitted,
-    this.opensKeyboard = true,
+    this.opensKeyboard = true,  this.isShowMultiplyValueAsDot=true,
   });
 
   /// The controller for the math field.
@@ -115,7 +115,8 @@ class MathField extends StatefulWidget {
   ///
   /// Defaults to `true`.
   final bool opensKeyboard;
-
+  /// if true, the multiply value will be shown as dot else it will be shown as x
+  final bool isShowMultiplyValueAsDot;
   @override
   _MathFieldState createState() => _MathFieldState();
 }
@@ -323,6 +324,7 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
           context: this.context,
           locale: Localizations.localeOf(this.context),
           child: MathKeyboard(
+            isShowMultiplyValueAsDot: widget.isShowMultiplyValueAsDot,
             controller: _controller,
             type: widget.keyboardType,
             variables: _variables,
@@ -365,18 +367,17 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
       return KeyEventResult.ignored;
     }
 
-    final configs =
-        <List<KeyboardButtonConfig>>[
-          if (widget.keyboardType ==
-              MathKeyboardType.expression) ...<List<KeyboardButtonConfig>>[
-            ...standardKeyboard,
-            ...functionKeyboard,
-          ] else if (widget.keyboardType == MathKeyboardType.numberOnly) ...[
-            ...numberKeyboard,
-          ],
-        ].fold<List<KeyboardButtonConfig>>([], (previousValue, element) {
-          return previousValue..addAll(element);
-        });
+    final configs = <List<KeyboardButtonConfig>>[
+      if (widget.keyboardType ==
+          MathKeyboardType.expression) ...<List<KeyboardButtonConfig>>[
+        ...standardKeyboard(isShowMultiplyValueAsDot: widget.isShowMultiplyValueAsDot),
+        ...functionKeyboard,
+      ] else if (widget.keyboardType == MathKeyboardType.numberOnly) ...[
+        ...numberKeyboard,
+      ],
+    ].fold<List<KeyboardButtonConfig>>([], (previousValue, element) {
+      return previousValue..addAll(element);
+    });
 
     final characterResult = _handleCharacter(keyEvent.character, configs);
     if (characterResult != null) {

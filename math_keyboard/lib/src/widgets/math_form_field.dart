@@ -49,18 +49,19 @@ class MathFormField extends FormField<String> {
              }
            }
 
-           return MathField(
-             controller: state._controller,
-             focusNode: focusNode,
-             decoration: decoration.copyWith(errorText: field.errorText),
-             keyboardType: keyboardType,
-             variables: variables,
-             autofocus: autofocus,
-             onChanged: onChangedHandler,
-             onSubmitted: onFieldSubmitted,
-           );
-         },
-       );
+             return MathField(
+
+               controller: state._controller,
+               focusNode: focusNode,
+               decoration: decoration.copyWith(errorText: field.errorText),
+               keyboardType: keyboardType,
+               variables: variables,
+               autofocus: autofocus,
+               onChanged: onChangedHandler,
+               onSubmitted: onFieldSubmitted,
+             );
+           },
+         );
 
   /// Controls the math input being edited.
   ///

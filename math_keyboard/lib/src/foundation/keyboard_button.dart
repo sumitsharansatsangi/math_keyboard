@@ -218,14 +218,16 @@ final functionKeyboard = [
 ];
 
 /// Standard keyboard for math expression input.
-final standardKeyboard = [
+List<List<KeyboardButtonConfig>> standardKeyboard ({bool isShowMultiplyValueAsDot=true}){
+  final multiplyButtonValue = isShowMultiplyValueAsDot ? r'\cdot' : r'\times';
+  return [
   [
     _digitButtons[7],
     _digitButtons[8],
     _digitButtons[9],
-    const BasicKeyboardButtonConfig(
+     BasicKeyboardButtonConfig(
       label: '×',
-      value: r'\cdot',
+      value: multiplyButtonValue,
       keyboardCharacters: ['*'],
       highlighted: true,
     ),
@@ -263,7 +265,7 @@ final standardKeyboard = [
     NextButtonConfig(),
     SubmitButtonConfig(),
   ],
-];
+];}
 
 /// Keyboard getting shown for number input only.
 final numberKeyboard = [
