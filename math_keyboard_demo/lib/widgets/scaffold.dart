@@ -73,17 +73,19 @@ class DemoScaffold extends StatelessWidget {
                         bottom: 3,
                       ),
                       child: MouseRegion(
-                        cursor: MaterialStateMouseCursor.clickable,
+                        cursor: SystemMouseCursors.click,
                         child: GestureDetector(
                           onTap: () {
                             launchUrlString(gitHubUrl);
                           },
                           child: Text(
                             header,
-                            style:
-                                Theme.of(context).textTheme.headline5?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -135,7 +137,7 @@ class DemoScaffold extends StatelessWidget {
                                   ],
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headline5
+                                      .headlineSmall
                                       ?.copyWith(
                                         fontSize: 28,
                                       ),
@@ -189,7 +191,7 @@ class DemoScaffold extends StatelessWidget {
                 height: 0,
               ),
               MouseRegion(
-                cursor: MaterialStateMouseCursor.clickable,
+                cursor: SystemMouseCursors.click,
                 child: GestureDetector(
                   onTap: () {
                     launchUrlString(organizationUrl);

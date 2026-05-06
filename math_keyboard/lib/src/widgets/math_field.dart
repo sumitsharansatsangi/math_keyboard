@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'package:math_expressions/math_expressions.dart';
+import 'package:math_expressions/math_expressions.dart' as math_expressions;
 import 'package:math_keyboard/src/foundation/keyboard_button.dart';
 import 'package:math_keyboard/src/foundation/math2tex.dart';
 import 'package:math_keyboard/src/foundation/node.dart';
@@ -17,7 +17,7 @@ import 'package:math_keyboard/src/widgets/view_insets.dart';
 class MathField extends StatefulWidget {
   /// Constructs a [MathField] widget.
   const MathField({
-    Key? key,
+    super.key,
     this.autofocus = false,
     this.focusNode,
     this.controller,
@@ -26,7 +26,8 @@ class MathField extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.onChanged,
     this.onSubmitted,
-  }) : super(key: key);
+    this.opensKeyboard = true,
+  });
 
   /// The controller for the math field.
   ///
@@ -107,6 +108,14 @@ class MathField extends StatefulWidget {
   /// Can be `null`.
   final ValueChanged<String>? onSubmitted;
 
+  /// Whether the field should open a keyboard on focus by itself or not.
+  ///
+  /// Set this to false if you want to provide input via an external source by
+  /// using [controller].
+  ///
+  /// Defaults to `true`.
+  final bool opensKeyboard;
+
   @override
   _MathFieldState createState() => _MathFieldState();
 }
@@ -140,6 +149,10 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
         'e',
         ...widget.variables,
       ];
+
+  bool get _isKeyboardShown =>
+      _overlayEntry != null &&
+      _keyboardSlideController.status != AnimationStatus.dismissed;
 
   @override
   void initState() {
@@ -302,6 +315,8 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
   }
 
   void _openKeyboard(BuildContext context) {
+    if (!widget.opensKeyboard) return;
+
     _overlayEntry?.remove();
     _overlayEntry = OverlayEntry(
       builder: (context) {
@@ -327,6 +342,15 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
     Overlay.of(context).insert(_overlayEntry!);
   }
 
+  /// Launches keyboard slide animation in reversed direction.
+  /// By the end of it the [_overlayEntry] will be removed
+  /// by the [_keyboardSlideController] listener callback.
+  ///
+  /// Keep in mind: it does not remove the focus from the field.
+  void _closeKeyboard() {
+    _keyboardSlideController.reverse();
+  }
+
   void _submit() {
     _focusNode.unfocus();
     widget.onSubmitted?.call(
@@ -334,8 +358,8 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
     );
   }
 
-  KeyEventResult _handleKey(FocusNode node, RawKeyEvent keyEvent) {
-    if (keyEvent is! RawKeyDownEvent) {
+  KeyEventResult _handleKey(FocusNode node, KeyEvent keyEvent) {
+    if (keyEvent is! KeyDownEvent) {
       // We do not want to handle key up events in order to prevent double
       // detection of logical key events (pressing backspace would be triggered
       // twice - once for key down and once for key up). Characters already
@@ -368,7 +392,7 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
     return KeyEventResult.ignored;
   }
 
-  /// Handles the given [RawKeyEvent.character].
+  /// Handles the given [KeyEvent.character].
   ///
   /// Returns `null` if not handled (indecisive) and a [KeyEventResult] if we
   /// can conclude about the complete key handling from the action taken.
@@ -421,7 +445,7 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
     return null;
   }
 
-  /// Handles the given [RawKeyEvent.logicalKey].
+  /// Handles the given [KeyEvent.logicalKey].
   ///
   /// Returns `null` if not handled (indecisive) and a [KeyEventResult] if we
   /// can conclude about the complete key handling from the action taken.
@@ -457,31 +481,48 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: MaterialStateMouseCursor.textable,
-      child: Focus(
-        focusNode: _focusNode,
-        autofocus: widget.autofocus,
-        // On devices with software keyboards, we *cannot* (properly) prevent the
-        // software keyboard from showing when a key on the physical keyboard
-        // is pressed. See https://github.com/flutter/flutter/issues/44681.
-        // todo: fix the problem once we have an update on flutter/flutter#44681.
-        onFocusChange: (primary) => _handleFocusChanged(context, open: primary),
-        onKey: _handleKey,
-        child: GestureDetector(
-          onTap: _focusNode.requestFocus,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return _FieldPreview(
-                controller: _controller,
-                scrollController: _scrollController,
-                cursorOpacity: _cursorOpacity,
-                hasFocus: _focusNode.hasFocus,
-                decoration: widget.decoration
-                    .applyDefaults(Theme.of(context).inputDecorationTheme),
-              );
+    return PopScope(
+      canPop: !_isKeyboardShown,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          _closeKeyboard();
+        }
+      },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.text,
+        child: Focus(
+          focusNode: _focusNode,
+          autofocus: widget.autofocus,
+          // On devices with software keyboards, we *cannot* (properly) prevent the
+          // software keyboard from showing when a key on the physical keyboard
+          // is pressed. See https://github.com/flutter/flutter/issues/44681.
+          // todo: fix the problem once we have an update on flutter/flutter#44681.
+          onFocusChange: (primary) =>
+              _handleFocusChanged(context, open: primary),
+          onKeyEvent: _handleKey,
+          child: GestureDetector(
+            onTap: () {
+              if (!_focusNode.hasFocus) {
+                _focusNode.requestFocus();
+              } else if (!_isKeyboardShown) {
+                // Sometimes the field can be focused but the keyboard is not shown.
+                // For example if it was closed with [_closeKeyboard].
+                _handleFocusChanged(context, open: true);
+              }
             },
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return _FieldPreview(
+                  controller: _controller,
+                  scrollController: _scrollController,
+                  cursorOpacity: _cursorOpacity,
+                  hasFocus: _focusNode.hasFocus,
+                  decoration: widget.decoration
+                      .applyDefaults(Theme.of(context).inputDecorationTheme),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -549,7 +590,7 @@ class _FieldPreview extends StatelessWidget {
 
   // Adapted from InputDecorator._getInlineStyle.
   TextStyle _getHintStyle(ThemeData themeData) {
-    return themeData.textTheme.subtitle1!
+    return themeData.textTheme.titleMedium!
         .copyWith(
             color: decoration.enabled
                 ? themeData.hintColor
@@ -662,7 +703,7 @@ class MathFieldEditingController extends ChangeNotifier {
   }
 
   /// Clears the current value and sets it to the [expression] equivalent.
-  void updateValue(Expression expression) {
+  void updateValue(math_expressions.Expression expression) {
     try {
       root = convertMathExpressionToTeXNode(expression);
     } catch (e) {

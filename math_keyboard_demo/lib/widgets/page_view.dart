@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:math_expressions/math_expressions.dart';
+import 'package:math_expressions/math_expressions.dart' hide Stack;
 import 'package:math_keyboard/math_keyboard.dart';
 
 /// Page view for presenting the features that math_keyboard has to offer.
@@ -84,7 +84,6 @@ class _DemoPageViewState extends State<DemoPageView> {
                 bottom: 0,
                 left: 8,
                 child: MouseRegion(
-                  cursor: MaterialStateMouseCursor.clickable,
                   child: GestureDetector(
                     onTap: () {
                       _controller.animateToPage(
@@ -105,7 +104,7 @@ class _DemoPageViewState extends State<DemoPageView> {
                 bottom: 0,
                 right: 8,
                 child: MouseRegion(
-                  cursor: MaterialStateMouseCursor.clickable,
+                  cursor: SystemMouseCursors.click,
                   child: GestureDetector(
                     onTap: () {
                       _controller.animateToPage(
@@ -188,7 +187,7 @@ class _PageIndicator extends StatelessWidget {
     final size = Size.fromRadius(selected ? 6.5 : 5);
 
     return MouseRegion(
-      cursor: MaterialStateMouseCursor.clickable,
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -205,7 +204,7 @@ class _PageIndicator extends StatelessWidget {
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface
-                      .withOpacity(selected ? 1 : 1 / 2),
+                      .withValues(alpha: selected ? 1 : 1 / 2),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -226,9 +225,10 @@ class _PrimaryPage extends StatefulWidget {
 
 class _PrimaryPageState extends State<_PrimaryPage> {
   late final _expressionController = MathFieldEditingController()
-    ..updateValue(Parser().parse('4.2 - (cos(x)/(x^3 - sin(x))) + e^(4^2)'));
+    ..updateValue(
+        ShuntingYardParser().parse('4.2 - (cos(x)/(x^3 - sin(x))) + e^(4^2)'));
   late final _numberController = MathFieldEditingController()
-    ..updateValue(Parser().parse('42'));
+    ..updateValue(ShuntingYardParser().parse('42'));
 
   @override
   void dispose() {
@@ -247,7 +247,7 @@ class _PrimaryPageState extends State<_PrimaryPage> {
           ),
           child: Text(
             'Try it now!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -311,7 +311,7 @@ class _InputDecorationPage extends StatelessWidget {
           ),
           child: Text(
             'Completely customizable with InputDecoration!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -399,10 +399,10 @@ class _ControllerPage extends StatefulWidget {
 
 class _ControllerPageState extends State<_ControllerPage> {
   late final _clipboardController = MathFieldEditingController()
-    ..updateValue(Parser().parse('log(2, x) - log(5, 2) / 24'));
+    ..updateValue(ShuntingYardParser().parse('log(2, x) - log(5, 2) / 24'));
   late final _clearAllController = MathFieldEditingController();
   late final _magicController = MathFieldEditingController()
-    ..updateValue(Parser().parse('42'));
+    ..updateValue(ShuntingYardParser().parse('42'));
 
   @override
   void dispose() {
@@ -422,7 +422,7 @@ class _ControllerPageState extends State<_ControllerPage> {
           ),
           child: Text(
             'Fully controllable using custom controllers!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -494,7 +494,7 @@ class _ControllerPageState extends State<_ControllerPage> {
                   decoration: InputDecoration(
                     helperText: 'Clear all field',
                     suffix: MouseRegion(
-                      cursor: MaterialStateMouseCursor.clickable,
+                      cursor: SystemMouseCursors.click,
                       child: GestureDetector(
                         onTap: _clearAllController.clear,
                         child: const Icon(
@@ -581,7 +581,7 @@ class _AutofocusPage extends StatelessWidget {
           ),
           child: Text(
             'With autofocus support!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -646,7 +646,7 @@ class _FocusTreePageState extends State<_FocusTreePage> {
           ),
           child: Text(
             'And focus tree integration!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -770,7 +770,7 @@ class _DecimalSeparatorPage extends StatefulWidget {
 
 class _DecimalSeparatorPageState extends State<_DecimalSeparatorPage> {
   late final _controller = MathFieldEditingController()
-    ..updateValue(Parser().parse('4.2'));
+    ..updateValue(ShuntingYardParser().parse('4.2'));
 
   @override
   void dispose() {
@@ -788,7 +788,7 @@ class _DecimalSeparatorPageState extends State<_DecimalSeparatorPage> {
           ),
           child: Text(
             'Adaptive decimal separators!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -859,14 +859,14 @@ class _MathExpressionsPage extends StatefulWidget {
 
 class _MathExpressionsPageState extends State<_MathExpressionsPage> {
   String? _tex;
-  late Expression _expression = Parser().parse('(x^2)/2 + 1');
+  late Expression _expression = ShuntingYardParser().parse('(x^2)/2 + 1');
   double _value = 4;
   double? _result;
 
   late final _expressionController = MathFieldEditingController()
     ..updateValue(_expression);
   late final _valueController = MathFieldEditingController()
-    ..updateValue(Parser().parse('$_value'));
+    ..updateValue(ShuntingYardParser().parse('$_value'));
 
   @override
   void initState() {
@@ -900,7 +900,7 @@ class _MathExpressionsPageState extends State<_MathExpressionsPage> {
           ),
           child: Text(
             'Math expression support!',
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
             textAlign: TextAlign.center,
@@ -1024,7 +1024,7 @@ class _FormFieldPage extends StatelessWidget {
                 ),
                 child: Text(
                   'Last but not least: form fields!',
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                         fontStyle: FontStyle.italic,
                       ),
                   textAlign: TextAlign.center,

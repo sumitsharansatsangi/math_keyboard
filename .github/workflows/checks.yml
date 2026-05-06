@@ -1,6 +1,11 @@
 name: checks
+permissions:
+  contents: read
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -44,7 +49,7 @@ jobs:
         working-directory: ${{ matrix.package }}
       - name: dart format
         working-directory: ${{ matrix.package }}
-        run: dart format . --fix --set-exit-if-changed
+        run: dart format . --set-exit-if-changed
       - run: flutter analyze
         working-directory: ${{ matrix.package }}
 
@@ -70,5 +75,16 @@ jobs:
       - run: flutter pub get
         working-directory: ${{ matrix.package }}
       - name: Run unit tests
+        if: ${{ matrix.channel == 'master' || matrix.channel == 'beta' }}
         run: flutter test
         working-directory: ${{ matrix.package }}
+      - name: Run unit tests with coverage
+        if: ${{ matrix.channel == 'stable' }}
+        run: flutter test --coverage
+        working-directory: ${{ matrix.package }}
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.channel == 'stable' }}
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ matrix.package }}/coverage/lcov.info
+          flags: ${{ matrix.package }}

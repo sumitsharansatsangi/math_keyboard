@@ -1,3 +1,33 @@
+## 0.3.3
+
+* Update `intl`
+
+## 0.3.2
+
+* Workaround for dart2wasm [bug](https://github.com/dart-lang/sdk/issues/59782).
+
+## 0.3.1
+
+* Updated README
+ 
+## 0.3.0
+
+* Updated all dependencies
+* Require flutter: `'>=3.22.2'` 
+
+## 0.2.1
+
+* Added Android support to the demo project.
+* Closes keyboard on Android hardware back button press.
+
+## 0.2.0
+
+* Bumped `flutter_math_fork` and `intl`.
+
+## 0.1.9
+
+* Exposes `MathKeyboards` and adds padding and hover effects to it.
+
 ## 0.1.8
 
 * Return empty string instead of \\Box when field is empty
