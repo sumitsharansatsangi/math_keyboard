@@ -628,7 +628,6 @@ class _FieldPreview extends StatelessWidget {
           '{${decimalSeparator(context)}}',
         );
 
-    print(tex);
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minWidth: double.infinity,
