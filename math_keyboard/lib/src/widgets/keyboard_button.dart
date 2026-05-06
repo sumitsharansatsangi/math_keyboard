@@ -80,17 +80,18 @@ class _KeyboardButtonState extends State<KeyboardButton>
       child: RawGestureDetector(
         behavior: HitTestBehavior.opaque,
         gestures: <Type, GestureRecognizerFactory>{
-          _AlwaysWinningGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-              _AlwaysWinningGestureRecognizer>(
-            () => _AlwaysWinningGestureRecognizer(),
-            (_AlwaysWinningGestureRecognizer instance) {
-              instance
-                ..onTap = widget.onTap
-                ..onTapUp = _handleTapUp
-                ..onTapDown = _handleTapDown
-                ..onTapCancel = _handleTapCancel;
-            },
-          ),
+          _AlwaysWinningGestureRecognizer:
+              GestureRecognizerFactoryWithHandlers<
+                _AlwaysWinningGestureRecognizer
+              >(() => _AlwaysWinningGestureRecognizer(), (
+                _AlwaysWinningGestureRecognizer instance,
+              ) {
+                instance
+                  ..onTap = widget.onTap
+                  ..onTapUp = _handleTapUp
+                  ..onTapDown = _handleTapDown
+                  ..onTapCancel = _handleTapCancel;
+              }),
         },
         child: Padding(
           padding: const EdgeInsets.all(4),
@@ -106,14 +107,14 @@ class _KeyboardButtonState extends State<KeyboardButton>
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.white.withValues(
-                      alpha: Curves.easeInOut
-                              .transform(_animationController.value) /
+                      alpha:
+                          Curves.easeInOut.transform(
+                            _animationController.value,
+                          ) /
                           3,
                     ),
                   ),
-                  child: Center(
-                    child: child,
-                  ),
+                  child: Center(child: child),
                 );
               },
               child: widget.child,
@@ -132,10 +133,7 @@ class _KeyboardButtonState extends State<KeyboardButton>
       );
     }
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: result,
-    );
+    return MouseRegion(cursor: SystemMouseCursors.click, child: result);
   }
 }
 
