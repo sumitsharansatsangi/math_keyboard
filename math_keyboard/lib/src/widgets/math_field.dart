@@ -500,7 +500,6 @@ class _MathFieldState extends State<MathField> with TickerProviderStateMixin {
           // On devices with software keyboards, we *cannot* (properly) prevent the
           // software keyboard from showing when a key on the physical keyboard
           // is pressed. See https://github.com/flutter/flutter/issues/44681.
-          // todo: fix the problem once we have an update on flutter/flutter#44681.
           onFocusChange: (primary) =>
               _handleFocusChanged(context, open: primary),
           onKeyEvent: _handleKey,
@@ -636,9 +635,7 @@ class _FieldPreview extends StatelessWidget {
       ),
       child: InputDecorator(
         textAlignVertical: TextAlignVertical.center,
-        // TODO: replace once the decorator handles the hint.
-        // isEmpty: controller.isEmpty,
-        isEmpty: false,
+        isEmpty: controller.isEmpty,
         isFocused: hasFocus,
         decoration: decoration,
         child: SingleChildScrollView(

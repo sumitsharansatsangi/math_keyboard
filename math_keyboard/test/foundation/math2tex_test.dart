@@ -276,4 +276,34 @@ void main() {
       );
     });
   });
+
+  group('edge cases', () {
+    test('empty expression', () {
+      expect(() => GrammarParser().parse(''), throwsException);
+    });
+
+    test('single number', () {
+      const exp = '42';
+      expect(
+        GrammarParser().parse(exp).toString(),
+        '42.0',
+      );
+    });
+
+    test('variable only', () {
+      const exp = 'x';
+      expect(
+        GrammarParser().parse(exp).toString(),
+        'x',
+      );
+    });
+
+    test('complex expression', () {
+      const exp = 'sin(x) + cos(y) * sqrt(z)';
+      expect(
+        GrammarParser().parse(exp).toString(),
+        '(sin(x) + (cos(y) * sqrt(z)))',
+      );
+    });
+  });
 }

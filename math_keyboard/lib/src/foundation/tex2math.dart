@@ -433,7 +433,7 @@ class TeXParser {
 
   /// Checks whether factorial can be calculated.
   void addFactorial(List<Expression> result) {
-    final t = result.removeLast().evaluate(EvaluationType.REAL, ContextModel());
+    final t = RealEvaluator().evaluate(result.removeLast());
     if (t.ceil() == t.floor() && t >= 0 && t < 20) {
       var a = t.toInt();
       var y = 1;
